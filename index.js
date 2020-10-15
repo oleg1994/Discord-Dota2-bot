@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
+const { prefix } = require('./config.json');
 const client = new Discord.Client();
 const fs = require('fs')
 require('dotenv').config()
@@ -44,7 +44,7 @@ client.on('message', message => {
         return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
     }
     try {
-        command.run(client,message,args);
+        command.run(client, message, args);
     } catch (error) {
         console.error(error);
         message.reply('there was an error trying to execute that command!');

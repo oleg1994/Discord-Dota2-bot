@@ -2,8 +2,12 @@ const Discord = require('discord.js');
 const { prefix } = require('./config.json');
 const client = new Discord.Client();
 const fs = require('fs')
-require('dotenv').config()
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Server running on ${port}, http://localhost:${port}`));
 
+require('dotenv').config()
 client.commands = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));

@@ -1,0 +1,27 @@
+{
+  "name": "discord-dota2-mmr-tracker",
+  "version": "1.0.0",
+  "description": "Discord Dota2 Mmr Tracker",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oleg1994/Discord-Dota2-Mmr-Tracker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oleg1994/Discord-Dota2-Mmr-Tracker/issues"
+  },
+  "homepage": "https://github.com/oleg1994/Discord-Dota2-Mmr-Tracker#readme",
+  "dependencies": {
+    "canvas": "^2.6.1",
+    "discord.js": "^12.3.1",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.8",
+    "node-fetch": "^2.6.1",
+    "nodemon": "^2.0.4"
+  }
+}

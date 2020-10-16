@@ -3,6 +3,7 @@ const Canvas = require('canvas')
 const Discord = require('discord.js')
 const detectRank = require('../utilities/badgeCreator.js');
 const database = require('../database/database.js');
+Canvas.registerFont('./Roboto-Bold.ttf', { family: 'Roboto' })
 
 
 
@@ -12,7 +13,7 @@ const measureText = (canvas, text, size) => {
     let fontSize = size;
     do {
         // Assign the font to the context and decrement it so it can be measured again
-        ctx.font = `700 ${fontSize -= 4}px sans-serif`;
+        ctx.font = `700 ${fontSize -= 4}px Roboto`;
         // Compare pixel width of the text to the canvas minus the approximate avatar size
     } while (ctx.measureText(text).width > canvas.width - 300);
     // Return the result to use in the actual canvas
@@ -60,7 +61,7 @@ exports.run = async (client, message, args) => {
 
         //immortalRanks
         if (data.leaderboard_rank) {
-            ctx.font = `700 21px sans-serif`
+            ctx.font = `700 21px Roboto`
             ctx.fillText(`${data.leaderboard_rank}`, 160, 247, 100, 100);
         }
 
@@ -72,7 +73,7 @@ exports.run = async (client, message, args) => {
         ctx.beginPath();
         ctx.strokeStyle = '#74037b';
         ctx.strokeRect(0, 0, canvas.width, canvas.height);
-        ctx.font = '700 60px sans-serif';
+        ctx.font = '700 60px Roboto';
         // Select the style that will be used to fill the text in
         ctx.fillStyle = 'white';
         ctx.shadowOffsetX = 4;
@@ -81,7 +82,6 @@ exports.run = async (client, message, args) => {
         ctx.shadowBlur = 4;
         // Actually fill the text with a solid color
         ctx.fillText(`PRIVATE PROFILE`, canvas.width / 8, canvas.height / 1.8);
-        ctx.fillText(`¯\\_(ツ)_/¯`, canvas.width / 3.5, canvas.height / 1.2);
 
 
         const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'profile.png');

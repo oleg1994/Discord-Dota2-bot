@@ -64,7 +64,7 @@ const getUser = async (discordUser) => {
             status = ['none']
         } else {
             console.log('getUSer')
-            status = docs[0].steamID
+            status = [docs[0].steamID]
         }
     });
     return status
@@ -85,10 +85,10 @@ const removeUser = async (discordUser) => {
         if (err) { console.log(err) }
         if (result) {
             //user found and removed
-            status = 'removed'
+            status = ['removed']
         } else {
             //there isn't such user 
-            status = 'none'
+            status = ['none']
         }
     });
     return status

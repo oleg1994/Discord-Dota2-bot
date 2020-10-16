@@ -3,7 +3,7 @@ const Canvas = require('canvas')
 const Discord = require('discord.js')
 const detectRank = require('../utilities/badgeCreator.js');
 const database = require('../database/database.js');
-Canvas.registerFont('./SansSerif.otf', { family: 'SansX' })
+Canvas.registerFont('./Roboto-Bold.ttf', { family: 'Roboto' })
 
 
 const measureText = (canvas, text, size) => {
@@ -12,13 +12,43 @@ const measureText = (canvas, text, size) => {
     let fontSize = size;
     do {
         // Assign the font to the context and decrement it so it can be measured again
-        ctx.font = `700 ${fontSize -= 4}px SansX`;
+        ctx.font = `700 ${fontSize -= 4}px Roboto`;
         // Compare pixel width of the text to the canvas minus the approximate avatar size
     } while (ctx.measureText(text).width > canvas.width - 300);
     // Return the result to use in the actual canvas
     return ctx.font;
 };
 
+const timeConverter = (epochTime, matchDuration) => {
+    var utcSeconds = epochTime;
+    var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+    d.setUTCSeconds(utcSeconds);
+    d.setMinutes(d.getMinutes() + Number(matchDuration.toString().slice(0, 2)));
+    function getTimeSince(start) {
+        var msSince = (new Date() - start);
+        var msInDay = 24 * 60 * 60 * 1000
+            , msInHour = 60 * 60 * 1000
+            , msInMinute = 60 * 1000
+            , msInSecond = 1000;
+
+        if (msSince > msInDay) { // greater than one day
+            return parseInt(msSince / msInDay).toString() + 'd Ago';
+        } else if (msSince > msInHour) { // greater than one hour
+            return parseInt(msSince / msInHour).toString() + 'h Ago';
+        } else if (msSince > msInMinute) { // greater than one minute
+            return parseInt(msSince / msInMinute).toString() + 'm Ago';
+        } else { // seconds ago
+            var sSince = parseInt(msSince / msInSecond);
+            if (sSince > 0) {
+                return sSince.toString() + 's Ago';
+            } else {
+                return "Just Now";
+            }
+        }
+    };
+    console.log(getTimeSince(d))
+    return getTimeSince(d)
+}
 exports.run = async (client, message, args) => {
     const getUser = await database.getUser(message.author)
 
@@ -27,11 +57,23 @@ exports.run = async (client, message, args) => {
     const background = await Canvas.loadImage('./img/BG2.png');
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
-    if (getUser[0] !== 'none' && getUser[0]) {
-        let [data, mmr, wl, profile] = await Promise.all([
-            fetch(`https://api.opendota.com/api/players/${getUser}`).then(response => response.json()),
-            fetch(`https://api.opendota.com/api/players/${getUser}`).then(response => response.json()),
-            fetch(`https://api.opendota.com/api/players/${getUser}/wl`).then(response => response.json()),
+    if (getUser[0] !== 'none' && getUser[0] !== undefined) {
+
+
+
+
+
+
+
+
+
+
+
+
+        let [data, recentMatches, wl] = await Promise.all([
+            fetch(`https://api.opendota.com/api/players/${getUser[0]}`).then(response => response.json()),
+            fetch(`https://api.opendota.com/api/players/${getUser[0]}/recentMatches`).then(response => response.json()),
+            fetch(`https://api.opendota.com/api/players/${getUser[0]}/wl`).then(response => response.json()),
         ])
         if (data.rank_tier) {
             const badge = await Canvas.loadImage(`./img/badges/${detectRank(data.rank_tier)[0]}`);
@@ -51,9 +93,10 @@ exports.run = async (client, message, args) => {
             // Actually fill the text with a solid color
             ctx.fillText(`IGN: ${data.profile.personaname}`, canvas.width / 3, 50);
 
-            // ctx.fillText(`HISTORY: ${victories.join(', ').replace(/,/g, '-').replace(/\s/g,'')}`, canvas.width / 3, canvas.height / 2);
-            ctx.fillText(`MMR: ~${mmr.mmr_estimate.estimate}`, canvas.width / 3, 90);
+            ctx.fillText(`MMR: ~${data.mmr_estimate.estimate}`, canvas.width / 3, 90);
             ctx.fillText(`W:${wl.win} L:${wl.lose} ${`${wl.win / (wl.win + wl.lose) * 100}`.toString().slice(0, 4) + `%`} `, canvas.width / 3, 130);
+            ctx.fillText(`Last Match: ${timeConverter(recentMatches[0].start_time, recentMatches[0].duration)} `,canvas.width / 3, 167);
+
 
             ctx.drawImage(avatar, 25, 25, 200, 200);
             ctx.drawImage(badge, 130, 147, 110, 110);
@@ -61,8 +104,8 @@ exports.run = async (client, message, args) => {
 
             //immortalRanks
             if (data.leaderboard_rank) {
-                ctx.font = `700 21px sans-serif`
-                ctx.fillText(`${data.leaderboard_rank}`, 160, 247, 100, 100);
+                ctx.font = `700 21px Roboto`
+                ctx.fillText(`${data.leaderboard_rank}`, 167, 247, 100, 100);
             }
 
 

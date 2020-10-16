@@ -3,7 +3,7 @@ const Canvas = require('canvas')
 const Discord = require('discord.js')
 const detectRank = require('../utilities/badgeCreator.js');
 const database = require('../database/database.js');
-
+Canvas.registerFont('./SansSerif.otf', { family: 'SansX' })
 
 
 const measureText = (canvas, text, size) => {
@@ -12,7 +12,7 @@ const measureText = (canvas, text, size) => {
     let fontSize = size;
     do {
         // Assign the font to the context and decrement it so it can be measured again
-        ctx.font = `700 ${fontSize -= 4}px sans-serif`;
+        ctx.font = `700 ${fontSize -= 4}px SansX`;
         // Compare pixel width of the text to the canvas minus the approximate avatar size
     } while (ctx.measureText(text).width > canvas.width - 300);
     // Return the result to use in the actual canvas

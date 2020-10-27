@@ -1,7 +1,19 @@
 const Discord = require('discord.js');
 const { prefix } = require('./config.json');
 const client = new Discord.Client();
-const fs = require('fs')
+const fs = require('fs');
+
+
+let TOKEN, PREFIX;
+try {
+  const config = require("./config.json");
+  TOKEN = config.TOKEN;
+  PREFIX = config.PREFIX;
+} catch (error) {
+  TOKEN = process.env.TOKEN;
+  PREFIX = process.env.PREFIX;
+}
+
 
 
 const express = require('express');
@@ -66,9 +78,9 @@ client.on('message', message => {
 
 
 
+client.login(TOKEN);
 
-
-client.login(process.env.TOKEN);
+// client.login(process.env.TOKEN); //
 
 
 

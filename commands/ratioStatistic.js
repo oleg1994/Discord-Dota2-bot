@@ -6,9 +6,10 @@ const database = require('../database/database.js');
 
 exports.run = async (client, message, args) => {
     const getUser = await database.getUser(message.author)
-    if (getUser[0] !== 'none' && getUser) {
+    console.log(message.author)
+    if (getUser !== 'none' && getUser !== undefined) {
         let ratio;
-        await fetch(`https://api.opendota.com/api/players/${getUser}/wl?limit=10`).then(response => response.json()).then((data) => {
+        await fetch(`https://api.opendota.com/api/players/${getUser[0]}/wl?limit=10`).then(response => response.json()).then((data) => {
             ratio = data
         })
         console.log(ratio)

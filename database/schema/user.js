@@ -8,6 +8,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    lastMatchID: {
+        type: String,
+        required: true
+    },
     date: {
         type: Date,
         default: Date.now

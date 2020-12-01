@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 const User = require('./schema/user')
+const fetch = require('node-fetch');
+require('dotenv').config()
+
 
 
 // connection to mongodb
-mongoose.connect('mongodb+srv://oleg:oleg123@cluster0-imopr.mongodb.net/DiscordDota2MMR?retryWrites=true&w=majority', {
+mongoose.connect(process.env.MONGODB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false
@@ -15,14 +18,14 @@ db.once('open', function () {
     console.log('db connected')
 });
 
-const linkStatus = async (discordUser, steamID) => {
+const linkStatus = async (discordUser, steamID, matchID) => {
     let status
     await User.find({ steamID: steamID }, function (err, docs) {
         if (err) { console.error(err) }
         // console.log(docs.length == 0, 'docs', docs)
         if (docs === undefined || docs.length == 0) {
             // console.log('check arr')
-            registerUser(discordUser, steamID)
+            registerUser(discordUser, steamID, matchID)
             //'new link'
             status = ['linked']
         } else {
@@ -42,10 +45,11 @@ const linkStatus = async (discordUser, steamID) => {
     return status
 }
 
-const registerUser = (discordUser, steamID) => {
+const registerUser = (discordUser, steamID, matchID) => {
     let newUser = new User({
         discordID: discordUser.id,
         steamID: steamID[0],
+        lastMatchID: matchID,
     });
     newUser.save(function (err, user) {
         if (err) {
@@ -57,14 +61,14 @@ const registerUser = (discordUser, steamID) => {
 
 }
 const getUser = async (discordUser) => {
-    let status
+    let status;
     await User.find({ discordID: discordUser.id }, function (err, docs) {
         if (err) { console.error(err) }
         if (docs === undefined || docs.length == 0) {
             status = ['none']
         } else {
-            console.log('getUSer')
-            status = [docs[0].steamID]
+            // updateUser(docs[0].steamID)
+            status = [docs[0].steamID, docs[0].lastMatchID]
         }
     });
     return status
@@ -92,6 +96,21 @@ const removeUser = async (discordUser) => {
         }
     });
     return status
+}
+const updateUser = async (steamID) => {
+    let latestMatch;
+    let [fetchedMatchData] = await Promise.all([
+        fetch(`https://api.opendota.com/api/players/${steamID}/recentMatches`).then(response => response.json()),
+    ])
+    User.findOneAndUpdate({ steamID: steamID }, { lastMatchID: fetchedMatchData[0].match_id }, function (err, result) {
+        if (err) {
+            console.log(err)
+        }
+        else {
+            return result.lastMatchID
+        }
+    })
+    return latestMatch
 }
 
 module.exports = { registerUser, linkStatus, removeUser, getUser }

@@ -5,19 +5,17 @@ const database = require('../database/database.js');
 
 
 exports.run = async (client, message, args) => {
-    // const linkStatus = await database.removeUser(message.author)
     let removeStatus = null
     try {
         removeStatus = await database.removeUser(message.author)
         if (!removeStatus) removeStatus = null;
-      } catch (error) {
-          console.log(error)
+    } catch (error) {
+        console.log(error)
     }
 
-
-    if(removeStatus !== null && removeStatus[0] === 'removed'){
+    if (removeStatus !== null && removeStatus[0] === 'removed') {
         message.channel.send(`Hey "${message.author.username}" you successfully unlinked your discord from Dota 2 profile`);
-    }else{
+    } else {
         message.channel.send(`Hey "${message.author.username}" to use this command you need to link your Dota 2 profile first, to do so type "-link STEAMID "`);
     }
 
